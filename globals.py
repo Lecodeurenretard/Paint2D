@@ -18,5 +18,6 @@ drawing_surf = Surface(
 DRAWING_OFFSET = MENU_ZONES[0].h
 
 
-current_color = 0   # black
-brush_size = 1
+current_color	: int = 0x000000   # black
+brush_size 		: int = 1
+is_eraser		: bool = False

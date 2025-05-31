@@ -35,6 +35,10 @@ def increase_brush_size(how_much : int) -> None:
 	brush_size += how_much
 	brush_size = max(1, brush_size)
 
+def toggle_eraser() -> None:
+	global is_eraser
+	is_eraser = not is_eraser
+
 SAVE_BUTTON : Button = Button(
 	5,
 	5,
@@ -50,13 +54,21 @@ LOWER_SIZE_BUTTON : Button = Button(
 	(lambda: increase_brush_size(-5)),
 	"img/lower_size.png"
 )
-
 INCREASE_SIZE_BUTTON : Button = Button(
 	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 4)[0],
 	5,
 	Button.DEFAULT_SIZE,
 	(lambda: increase_brush_size(5)),
 	"img/increase_size.png"
+)
+
+ERASER_BUTTON : Button = Button(
+	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 8)[0],
+	5,
+	Button.DEFAULT_SIZE,
+	toggle_eraser,
+	"img/eraser.png",
+	True
 )
 
 drawing_surf.fill(hex_white)
@@ -107,9 +119,15 @@ while True:
 			else:
 				# Draw circle so the start and end positions are round
 				# Draw a line bc in a lot of cases, the mouse moves faster than 1 pixel per frame
+				color_remember = current_color
+				if is_eraser:
+					current_color = BACKGROUND_COLOR
+
 				draw_brush(shifted_prev_mouse_pos)
 				pygame.draw.line(drawing_surf, current_color, shifted_prev_mouse_pos, shifted_mouse_pos, brush_size)
 				draw_brush(shifted_mouse_pos)
+				current_color = color_remember
+
 
 		for butt in Button.butt_list:
 			butt.handle_click(mouse_pos)

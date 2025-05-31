@@ -1,6 +1,8 @@
 # Créé par adekambin, le 28/05/2025 en Python 3.7
 from header import *
 from globals import *
+from os.path import splitext
+
 class Button:
 	BASE_COLOR = 0x613434
 	DEFAULT_SIZE = 20
@@ -8,15 +10,25 @@ class Button:
 	butt_list = []
 	icon_scale : float = .8		# The scale factor of the icon (in [0, 1])
 
-	def __init__(self, x : int, y : int , size : int, action, icon : str | None =None):
+	def __init__(self, x : int, y : int , size : int, action, icon : str | None = None, enable_toggle : bool = False):
 		self.zone		= Rect(x, y, size, size)
 		self.callback	= action
 		self.already_clicked = False
+		
+		self.enable_toggle	= enable_toggle 
+		self.toggled		= False
 
 		if icon != None:
 			self.icon = pygame.transform.scale(pygame.image.load(icon), (size * Button.icon_scale, size * Button.icon_scale))
 		else:
 			self.icon = None
+		
+		if enable_toggle and icon != None:
+			icon_no_extention = splitext(icon)[0]
+			self.icon_toggled = pygame.transform.scale(pygame.image.load(icon_no_extention + "_toggled.png"), (size * Button.icon_scale, size * Button.icon_scale))
+		else:
+			self.icon_toggled = None
+		
 		Button.butt_list.append(self)
 
 	@staticmethod
@@ -57,22 +69,32 @@ class Button:
 		"""
 		return not self.already_clicked and is_in_rect(mouse_pos, self.zone)
 
+	def is_toggled(self) -> bool:
+		return self.enable_toggle and self.toggled
+
 	def handle_click(self, mouse_pos) -> None:
 		if self.is_just_clicked(mouse_pos):
 			self.activate()
+			self.toggled = not self.toggled
 
 	def activate(self) -> object:
 		return self.callback()
 	
 	def draw(self) -> None:
 		if self.already_clicked:
+			pygame.draw.rect(menu_surf, darken_color(Button.BASE_COLOR, .7), self.zone)
+		elif self.enable_toggle and self.toggled:
 			pygame.draw.rect(menu_surf, darken_color(Button.BASE_COLOR, .8), self.zone)
 		else:
 			pygame.draw.rect(menu_surf, Button.BASE_COLOR, self.zone)
 		
 		if self.icon != None:
 			offset : float = self.zone.w * (1-Button.icon_scale) / 2	# offset to center the icon
-			menu_surf.blit(self.icon, (self.zone.x + offset, self.zone.y + offset))
+			
+			if self.enable_toggle and self.toggled:
+				menu_surf.blit(self.icon_toggled, (self.zone.x + offset, self.zone.y + offset))
+			else:
+				menu_surf.blit(self.icon, (self.zone.x + offset, self.zone.y + offset))
 
 		pygame.draw.lines(menu_surf, hex_black, True, (
 			(self.zone.x				, self.zone.y),
