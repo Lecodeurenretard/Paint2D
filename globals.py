@@ -19,4 +19,4 @@ DRAWING_OFFSET = MENU_ZONES[0].h
 
 
 current_color = 0   # black
-cursor_size = 1
+brush_size = 1

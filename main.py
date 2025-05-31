@@ -2,6 +2,8 @@
 from header import *
 from button import *
 
+PLUS_IMAGE : Surface = pygame.image.load("img/plus.png")
+
 def quit(exit_code: int =0):
 	pygame.quit()
 	exit(exit_code)
@@ -18,14 +20,49 @@ def draw_menus():
 	for butt in Button.butt_list:
 		butt.draw()
 
+def draw_brush(pos, surface : Surface = drawing_surf, max_size : int = -1) -> None:
+	if max_size < 0:
+		pygame.draw.circle(surface, current_color, pos, brush_size/2, 0)
+		return
+	
+	pygame.draw.circle(surface, current_color, pos, min(brush_size, max_size)/2, 0)
+
 def save_drawing() -> None:
 	pygame.image.save(drawing_surf, "my_drawing.png")
 
-SAVE_BUTTON : Button = Button(5, 5, 20, save_drawing, "img/save.png")
+def increase_brush_size(how_much : int) -> None:
+	global brush_size
+	brush_size += how_much
+	brush_size = max(1, brush_size)
+
+SAVE_BUTTON : Button = Button(
+	5,
+	5,
+	Button.DEFAULT_SIZE,
+	save_drawing,
+	"img/save.png"
+)
+
+LOWER_SIZE_BUTTON : Button = Button(
+	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 3)[0],
+	5,
+	Button.DEFAULT_SIZE,
+	(lambda: increase_brush_size(-5)),
+	"img/lower_size.png"
+)
+
+INCREASE_SIZE_BUTTON : Button = Button(
+	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 4)[0],
+	5,
+	Button.DEFAULT_SIZE,
+	(lambda: increase_brush_size(5)),
+	"img/increase_size.png"
+)
 
 drawing_surf.fill(hex_white)
 
 prev_mouse_pos = (NaN, NaN)
+was_clicking : bool = False
 is_clicking : bool = False
 while True:
 	menu_surf.unlock()
@@ -35,6 +72,15 @@ while True:
 	))
 	pygame.display.flip()
 	draw_menus()
+
+	brush_coord = Button.location_on_horizontal_grid((5 + 11, 15), Button.DEFAULT_SIZE, 5)
+	draw_brush((
+		brush_coord[0],
+		brush_coord[1]
+	), menu_surf, 25)
+	if brush_size > 25:
+		# Display a plus sign
+		menu_surf.blit(pygame.transform.scale(PLUS_IMAGE, (14, 14)), (brush_coord[0] - 7, brush_coord[1] - 7))
 	menu_surf.lock()
 
 	for event in pygame.event.get():
@@ -57,15 +103,18 @@ while True:
 		)
 		if can_draw_at(mouse_pos):
 			if is_NaN_point(prev_mouse_pos):
-				draw_point(drawing_surf, shifted_mouse_pos, current_color)
+				draw_brush(shifted_mouse_pos)
 			else:
-				# Draw lines bc in a lot of cases, the mouse mouve faster than 1 pixel per frame
-				pygame.draw.line(drawing_surf, current_color, shifted_prev_mouse_pos, shifted_mouse_pos)
+				# Draw circle so the start and end positions are round
+				# Draw a line bc in a lot of cases, the mouse moves faster than 1 pixel per frame
+				draw_brush(shifted_prev_mouse_pos)
+				pygame.draw.line(drawing_surf, current_color, shifted_prev_mouse_pos, shifted_mouse_pos, brush_size)
+				draw_brush(shifted_mouse_pos)
 
 		for butt in Button.butt_list:
-			if butt.is_just_clicked(mouse_pos):
-				butt.activate()
+			butt.handle_click(mouse_pos)
 
 
 	Button.update_button_presses(is_clicking, mouse_pos)
 	prev_mouse_pos = mouse_pos
+	was_clicking = is_clicking

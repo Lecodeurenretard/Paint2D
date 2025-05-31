@@ -3,6 +3,7 @@ from header import *
 from globals import *
 class Button:
 	BASE_COLOR = 0x613434
+	DEFAULT_SIZE = 20
 
 	butt_list = []
 	icon_scale : float = .8		# The scale factor of the icon (in [0, 1])
@@ -31,15 +32,33 @@ class Button:
 		
 		for butt in Button.butt_list:
 			butt.already_clicked = butt.is_clicked(mouse_pos)
+	
+	@staticmethod
+	def location_on_horizontal_grid(first_button_location : tuple[int, int], cell_size : int, cell_index : int, cell_margin : int = 4) -> tuple[int, int]:
+		"""
+		On a virtual horizontal grid with cells of size `button_size` cell of index zero at `first_button_location`,
+		what is the position of the button at index `cell_index`?
+		"""
+		return (
+			first_button_location[0] + cell_size * cell_index + cell_margin * abs(cell_index),
+			first_button_location[1],
+		)
+
 
 	def is_clicked(self, mouse_pos) -> bool:
+		"""
+		Is the button clicked by the user?
+		"""
 		return is_in_rect(mouse_pos, self.zone)
 
 	def is_just_clicked(self, mouse_pos) -> bool:
+		"""
+		Has the button jsut been clicked by the user (is currently clicked but not on the previous frame)?
+		"""
 		return not self.already_clicked and is_in_rect(mouse_pos, self.zone)
 
 	def handle_click(self, mouse_pos) -> None:
-		if self.is_clicked(mouse_pos):
+		if self.is_just_clicked(mouse_pos):
 			self.activate()
 
 	def activate(self) -> object:
