@@ -10,7 +10,7 @@ class Button:
 	butt_list = []
 	icon_scale : float = .8		# The scale factor of the icon (in [0, 1])
 
-	def __init__(self, x : int, y : int , size : int, action, icon : str | None = None, enable_toggle : bool = False):
+	def __init__(self, x : int, y : int , size : int, action, icon : str | None = None, color_overrride : int | None = None,  enable_toggle : bool = False):
 		self.zone		= Rect(x, y, size, size)
 		self.callback	= action
 		self.already_clicked = False
@@ -22,6 +22,11 @@ class Button:
 			self.icon = pygame.transform.scale(pygame.image.load(icon), (size * Button.icon_scale, size * Button.icon_scale))
 		else:
 			self.icon = None
+		
+		if color_overrride != None:
+			self.color = color_overrride
+		else:
+			self.color = Button.BASE_COLOR
 		
 		if enable_toggle and icon != None:
 			icon_no_extention = splitext(icon)[0]
@@ -46,15 +51,12 @@ class Button:
 			butt.already_clicked = butt.is_clicked(mouse_pos)
 	
 	@staticmethod
-	def location_on_horizontal_grid(first_button_location : tuple[int, int], cell_size : int, cell_index : int, cell_margin : int = 4) -> tuple[int, int]:
+	def location_on_horizontal_grid(first_button_x_location : int, cell_size : int, cell_index : int, cell_margin : int = 4) -> int:
 		"""
 		On a virtual horizontal grid with cells of size `button_size` cell of index zero at `first_button_location`,
 		what is the position of the button at index `cell_index`?
 		"""
-		return (
-			first_button_location[0] + cell_size * cell_index + cell_margin * abs(cell_index),
-			first_button_location[1],
-		)
+		return first_button_x_location + cell_size * cell_index + cell_margin * abs(cell_index)
 
 
 	def is_clicked(self, mouse_pos) -> bool:
@@ -82,11 +84,11 @@ class Button:
 	
 	def draw(self) -> None:
 		if self.already_clicked:
-			pygame.draw.rect(menu_surf, darken_color(Button.BASE_COLOR, .7), self.zone)
+			pygame.draw.rect(menu_surf, darken_color(self.color, .7), self.zone)
 		elif self.enable_toggle and self.toggled:
-			pygame.draw.rect(menu_surf, darken_color(Button.BASE_COLOR, .8), self.zone)
+			pygame.draw.rect(menu_surf, darken_color(self.color, .8), self.zone)
 		else:
-			pygame.draw.rect(menu_surf, Button.BASE_COLOR, self.zone)
+			pygame.draw.rect(menu_surf, self.color, self.zone)
 		
 		if self.icon != None:
 			offset : float = self.zone.w * (1-Button.icon_scale) / 2	# offset to center the icon

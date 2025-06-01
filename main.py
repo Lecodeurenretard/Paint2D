@@ -1,6 +1,7 @@
 # Créé par adekambin, le 28/05/2025 en Python 3.7
 from header import *
 from button import *
+from os import remove
 
 PLUS_IMAGE : Surface = pygame.image.load("img/plus.png")
 
@@ -24,7 +25,10 @@ def draw_brush(pos, surface : Surface = drawing_surf, max_size : int = -1) -> No
 	if max_size < 0:
 		pygame.draw.circle(surface, current_color, pos, brush_size/2, 0)
 		return
-	
+	if brush_size < 2:
+		draw_point(surface, pos, current_color)
+		return
+
 	pygame.draw.circle(surface, current_color, pos, min(brush_size, max_size)/2, 0)
 
 def save_drawing() -> None:
@@ -39,37 +43,95 @@ def toggle_eraser() -> None:
 	global is_eraser
 	is_eraser = not is_eraser
 
+def disable_eraser() -> None:
+	global is_eraser
+	is_eraser = False
+
+def change_color_to(color_list_index : int) -> None:
+	assert 0 <= color_list_index < COLOR_LIST_LEN
+	global current_color
+	current_color = COLOR_LIST[color_list_index]
+
+BUTTON_DIST_FROM_TOP		: int = 3	# Distance from the top of the screen for buttons
+BUTTON_FIRST_DIST_FROM_LEFT	: int = 5	# Distance from the left side of the screen for the first button
+
 SAVE_BUTTON : Button = Button(
-	5,
-	5,
+	BUTTON_FIRST_DIST_FROM_LEFT,
+	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	save_drawing,
 	"img/save.png"
 )
 
 LOWER_SIZE_BUTTON : Button = Button(
-	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 3)[0],
-	5,
+	Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT, Button.DEFAULT_SIZE, 2),
+	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	(lambda: increase_brush_size(-5)),
 	"img/lower_size.png"
 )
 INCREASE_SIZE_BUTTON : Button = Button(
-	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 4)[0],
-	5,
+	Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT, Button.DEFAULT_SIZE, 3),
+	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	(lambda: increase_brush_size(5)),
 	"img/increase_size.png"
 )
 
 ERASER_BUTTON : Button = Button(
-	Button.location_on_horizontal_grid((5, 5), Button.DEFAULT_SIZE, 8)[0],
-	5,
+	WIN_WIDTH//2 - Button.DEFAULT_SIZE//2,		#centering the button
+	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	toggle_eraser,
 	"img/eraser.png",
-	True
+	enable_toggle=True
 )
+
+COLOR_BUTTONS : list[Button] = []
+
+COLOR_BUTT_DIST_FROM_TOP: int = 3
+COLOR_BUTT_MARGIN		: int = 4
+COLOR_BUTT_CELL_OFFSET	: int = 32
+# Generating color buttons
+IS_COLOR_LIST_LEN_EVEN : bool = COLOR_LIST_LEN%2 == 0
+for i in range(COLOR_LIST_LEN):	# I miss C-style for loops
+	# Dynamic lambda generation, without `eval()` only the lastest value of `i` is read (in this case `COLOR_LIST_LEN-1`)
+	change_color_lambda = eval(f"lambda: change_color_to({i})")
+	
+	# 
+	if i < COLOR_LIST_LEN/2:
+		# First row
+		COLOR_BUTTONS.append(
+			Button(
+				Button.location_on_horizontal_grid(
+					BUTTON_FIRST_DIST_FROM_LEFT,
+					Button.DEFAULT_SIZE//2,
+					COLOR_BUTT_CELL_OFFSET + i,
+					COLOR_BUTT_MARGIN
+				),
+				COLOR_BUTT_DIST_FROM_TOP,
+				Button.DEFAULT_SIZE//2,
+				change_color_lambda,
+				color_overrride=COLOR_LIST[i]
+			)
+		)
+		continue
+
+	# Second row
+	COLOR_BUTTONS.append(
+		Button(
+			Button.location_on_horizontal_grid(
+				BUTTON_FIRST_DIST_FROM_LEFT,
+				Button.DEFAULT_SIZE//2,
+				COLOR_BUTT_CELL_OFFSET + i - COLOR_LIST_LEN//2 - (0 if IS_COLOR_LIST_LEN_EVEN else 1),
+				COLOR_BUTT_MARGIN
+			),
+			COLOR_BUTT_DIST_FROM_TOP + Button.DEFAULT_SIZE//2 + COLOR_BUTT_MARGIN,
+			Button.DEFAULT_SIZE//2,
+			change_color_lambda,
+			color_overrride=COLOR_LIST[i]
+		)
+	)
 
 drawing_surf.fill(hex_white)
 
@@ -78,15 +140,18 @@ was_clicking : bool = False
 is_clicking : bool = False
 while True:
 	menu_surf.unlock()
-	window.blits((
+	window.blits((					# Draw `menu_surf` and `drawing_surf` on screen
 		(menu_surf, (0, 0)),
 		(drawing_surf, (0, DRAWING_OFFSET)),
 	))
 	pygame.display.flip()
 	draw_menus()
 
-	brush_coord = Button.location_on_horizontal_grid((5 + 11, 15), Button.DEFAULT_SIZE, 5)
-	draw_brush((
+	brush_coord = (
+		Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT + 11, Button.DEFAULT_SIZE, 4),
+		15
+	)
+	draw_brush((			# Draw the brush preview
 		brush_coord[0],
 		brush_coord[1]
 	), menu_surf, 25)
@@ -130,7 +195,8 @@ while True:
 
 
 		for butt in Button.butt_list:
-			butt.handle_click(mouse_pos)
+			if not was_clicking:
+				butt.handle_click(mouse_pos)
 
 
 	Button.update_button_presses(is_clicking, mouse_pos)

@@ -1,0 +1,164 @@
+###########################################################
+# variables couleur 18 principales
+###########################################################s
+rgb_vert = (0, 255, 0)
+rgb_rouge = (255, 0, 0)
+rgb_bleu = (0, 0, 255)
+rgb_cyan = (0, 255, 255)
+rgb_blanc = (255, 255, 255)
+rgb_jaune = (255, 255, 0)
+rgb_orange = (255, 165, 0)
+rgb_noir = (0, 0, 0)
+rgb_argent = (192, 192, 192)
+rgb_bleumarine = (0, 0, 128)
+rgb_citronvert = (0, 255, 0)
+rgb_magenta = (255, 0, 255)
+rgb_gris = (128, 128, 128)
+rgb_marron = (128, 0, 0)
+rgb_sarcelle = (0, 128, 128)
+rgb_vertclair = (0, 128, 0)
+rgb_vertolive = (128, 128, 0)
+rgb_violet = (128, 0, 128)
+
+###########################################################
+# variables couleur 140 en Anglais
+###########################################################
+rgb_aliceblue = (240, 248, 255)
+rgb_antiquewhite = (250, 235, 215)
+rgb_aqua = (0, 255, 255)
+rgb_aquamarine = (127, 255, 212)
+rgb_azure = (240, 255, 255)
+rgb_beige = (245, 245, 220)
+rgb_bisque = (255, 228, 196)
+rgb_black = (0, 0, 0); hex_black = 0x000000
+rgb_blanchedalmond = (255, 235, 205)
+rgb_blue = (0, 0, 255); hex_blue = 0x0000FF
+rgb_blueviolet = (138, 43, 226)
+rgb_brown = (165, 42, 42)
+rgb_burlywood = (222, 184, 135)
+rgb_cadetblue = (95, 158, 160)
+rgb_chartreuse = (127, 255, 0)
+rgb_chocolate = (210, 105, 30)
+rgb_coral = (255, 127, 80)
+rgb_cornflowerblue = (100, 149, 237)
+rgb_cornsilk = (255, 248, 220)
+rgb_crimson = (220, 20, 60)
+rgb_darkblue = (0, 0, 139)
+rgb_darkcyan = (0, 139, 139)
+rgb_darkgoldenrod = (184, 134, 11)
+rgb_darkgray = (169, 169, 169)
+hex_darkgreen = 0x006400
+hex_darkkhaki = 0xBDB76B
+hex_darkmagenta = 0x8B008B
+hex_darkolivegreen = 0x556B2F
+hex_darkorange = 0xFF8C00
+hex_darkorchid = 0x9932CC
+hex_darkred = 0x8B0000
+hex_darksalmon = 0xE9967A
+hex_darkseagreen = 0x8FBC8F
+hex_darkslateblue = 0x483D8B
+hex_darkslategray = 0x2F4F4F
+hex_darkturquoise = 0x00CED1
+hex_darkviolet = 0x9400D3
+hex_deeppink = 0xFF1493
+hex_deepskyblue = 0x00BFFF
+hex_dimgray = 0x696969
+hex_dodgerblue = 0x1E90FF
+hex_firebrick = 0xB22222
+hex_floralwhite = 0xFFFAF0
+hex_forestgreen = 0x228B22
+hex_fuchsia = 0xFF00FF; rgb_fuchsia = (255, 0, 255)
+hex_gainsboro = 0xDCDCDC
+hex_ghostwhite = 0xF8F8FF
+hex_gold = 0xFFD700
+hex_goldenrod = 0xDAA520
+hex_gray = 0x808080
+hex_green = 0x008000; rgb_green = (0, 128, 0)
+hex_greenyellow = 0xADFF2F
+hex_honeydew = 0xF0FFF0
+hex_hotpink = 0xFF69B4
+hex_indianred = 0xCD5C5C
+hex_indigo = 0x4B0082
+hex_ivory = 0xFFFFF0
+hex_khaki = 0xF0E68C
+hex_lavender = 0xE6E6FA
+hex_lavenderblush = 0xFFF0F5
+hex_lawngreen = 0x7CFC00
+hex_lemonchiffon = 0xFFFACD
+hex_lightblue = 0xADD8E6
+hex_lightcoral = 0xF08080
+hex_lightcyan = 0xE0FFFF
+hex_lightgoldenrodyellow = 0xFAFAD2
+hex_lightgreen = 0x90EE90
+hex_lightgrey = 0xD3D3D3
+hex_lightpink = 0xFFB6C1
+hex_lightsalmon = 0xFFA07A
+hex_lightseagreen = 0x20B2AA
+hex_lightskyblue = 0x87CEFA
+hex_lightslategray = 0x778899
+hex_lightsteelblue = 0xB0C4DE
+hex_lightyellow = 0xFFFFE0
+hex_lime = 0x00FF00; rgb_lime = (0, 255, 0)
+hex_limegreen = 0x32CD32
+hex_linen = 0xFAF0E6
+hex_magenta = 0xFF00FF
+hex_maroon = 0x800000
+hex_mediumaquamarine = 0x66CDAA
+hex_mediumblue = 0x0000CD
+hex_mediumorchid = 0xBA55D3
+hex_mediumpurple = 0x9370DB
+hex_mediumseagreen = 0x3CB371
+hex_mediumslateblue = 0x7B68EE
+hex_mediumspringgreen = 0x00FA9A
+hex_mediumturquoise = 0x48D1CC
+hex_mediumvioletred = 0xC71585
+hex_midnightblue = 0x191970
+hex_mintcream = 0xF5FFFA
+hex_mistyrose = 0xFFE4E1
+hex_moccasin = 0xFFE4B5
+hex_navajowhite = 0xFFDEAD
+hex_navy = 0x000080
+hex_oldlace = 0xFDF5E6
+hex_olive = 0x808000
+hex_olivedrab = 0x6B8E23
+hex_orange = 0xFFA500
+hex_orangered = 0xFF4500
+hex_orchid = 0xDA70D6
+hex_palegoldenrod = 0xEEE8AA
+hex_palegreen = 0x98FB98
+hex_paleturquoise= 0xAFEEEE
+hex_palevioletred = 0xDB7093
+hex_papayawhip = 0xFFEFD5
+hex_peachpuff = 0xFFDAB9
+hex_peru = 0xCD853F
+hex_pink = 0xFFC0CB
+hex_plum = 0xDDA0DD
+hex_powderblue = 0xB0E0E6
+hex_purple = 0x800080
+hex_red = 0xFF0000; rgb_red = (255, 0, 0)
+hex_rosybrown = 0xBC8F8F
+hex_royalblue = 0x4169E1
+hex_saddlebrown = 0x8B4513
+hex_salmon = 0xFA8072
+hex_sandybrown = 0xF4A460
+hex_seagreen = 0x2E8B57
+hex_seashell = 0xFFF5EE
+hex_sienna = 0xA0522D
+hex_silver = 0xC0C0C0
+hex_skyblue = 0x87CEEB
+hex_slateblue = 0x6A5ACD
+hex_slategray = 0x708090
+hex_snow = 0xFFFAFA
+hex_springgreen = 0x00FF7F
+hex_steelblue = 0x4682B4
+hex_tan = 0xD2B48C
+hex_teal = 0x008080
+hex_thistle = 0xD8BFD8
+hex_tomato = 0xFF6347
+hex_turquoise = 0x40E0D0
+hex_violetlight = 0xEE82EE
+hex_wheat = 0xF5DEB3
+hex_white = 0xFFFFFF; rgb_white = (255, 255, 255)
+hex_whitesmoke = 0xF5F5F5
+hex_yellow = 0xFFFF00; rgb_yellow = (255, 255, 255)
+hex_yellowgreen = 0x9ACD32
