@@ -22,7 +22,7 @@ def draw_menus():
 		butt.draw()
 
 def draw_brush(pos, surface : Surface = drawing_surf, max_size : int = -1) -> None:
-	if max_size < 0:
+	if max_size < 0:	# no limit
 		pygame.draw.circle(surface, current_color, pos, brush_size/2, 0)
 		return
 	if brush_size < 2:
@@ -54,6 +54,7 @@ def change_color_to(color_list_index : int) -> None:
 
 BUTTON_DIST_FROM_TOP		: int = 3	# Distance from the top of the screen for buttons
 BUTTON_FIRST_DIST_FROM_LEFT	: int = 5	# Distance from the left side of the screen for the first button
+BUTTON_FIRST_DIST_FROM_RIGHT: int =WIN_WIDTH - BUTTON_FIRST_DIST_FROM_LEFT	# Distance from the right side of the screen for the first button
 
 SAVE_BUTTON : Button = Button(
 	BUTTON_FIRST_DIST_FROM_LEFT,
@@ -85,6 +86,21 @@ ERASER_BUTTON : Button = Button(
 	toggle_eraser,
 	"img/eraser.png",
 	enable_toggle=True
+)
+
+RESET_BUTTON : Button = Button(
+	Button.location_on_horizontal_grid(WIN_WIDTH//2 - Button.DEFAULT_SIZE//2, Button.DEFAULT_SIZE, 4),		#centering the button
+	BUTTON_DIST_FROM_TOP,
+	Button.DEFAULT_SIZE,
+	(lambda: drawing_surf.fill(hex_white)),
+	"img/reset.png"
+)
+FILL_BUTTON : Button = Button(
+	Button.location_on_horizontal_grid(WIN_WIDTH//2 - Button.DEFAULT_SIZE//2, Button.DEFAULT_SIZE, 5),		#centering the button
+	BUTTON_DIST_FROM_TOP,
+	Button.DEFAULT_SIZE,
+	(lambda: drawing_surf.fill(current_color)),
+	"img/fill.png"
 )
 
 COLOR_BUTTONS : list[Button] = []

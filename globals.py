@@ -27,9 +27,6 @@ COLOR_LIST : tuple[int, ...] = (
 	hex_tomato,
 	hex_orange,
 	hex_yellow,
-	hex_magenta,
-	hex_tan,
-	hex_hotpink,
 	hex_lime,
 	hex_forestgreen,
 	hex_green,
@@ -40,6 +37,9 @@ COLOR_LIST : tuple[int, ...] = (
 	rgb_to_hex(rgb_darkblue),
 	hex_teal,
 	hex_turquoise,
+	hex_tan,
+	hex_hotpink,
+	hex_magenta,
 )
 COLOR_LIST_LEN : int = len(COLOR_LIST)
 

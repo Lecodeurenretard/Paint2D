@@ -5,6 +5,7 @@
 #		simplifiée de la bibliothèque pygame.
 #
 # Author:	  Jean-Christophe Dagnet - Lycée Louis Bascan
+# Modifications by LeRetardatN
 # Sources :	Inspiré de la bibliothèque graphics.c - UVSQ site de Versailles
 #
 # Created:	 04/04/2019
@@ -24,19 +25,18 @@
 #   SOMMAIRE :
 #
 #   1. GESTION D'EVENNEMENTS			Ligne 59
-#	  - Fermeture de fenêtre		   Ligne 64
-#	  - Clic souris (bloquant)		 Ligne 85
-#	  - Gestion souris (non bloquant)  Ligne 130
-#	  - Gestion clavier				Ligne 180
-#   2. AFFICHAGE DE TEXTE			   Ligne 247
-#   3. GESTION D'IMAGES				 Ligne 271
-#   4. GESTION DES SONS ET MUSIQUES	 Ligne 324
-#	  - PARTIE 4.1 : SONS			  Ligne 329
-#	  - PARTIE 4.2 : Musiques		  Ligne 366
-#   5 GESTION DU TEMPS				  Ligne 443
-#   6. VARIABLES COULEURS			   Ligne 475
-#		   - Fançais				   Ligne 480
-#		   - Anglais				   Ligne 502
+#		- Fermeture de fenêtre			Ligne 64
+#		- Clic souris (bloquant)		Ligne 85
+#		- Gestion souris (non bloquant)	Ligne 130
+#		- Gestion clavier				Ligne 180
+#	2. AFFICHAGE DE TEXTE				Ligne 247
+#	3. GESTION D'IMAGES					Ligne 271
+#	4. GESTION DES SONS ET MUSIQUES		Ligne 324
+#		- PARTIE 4.1 : SONS				Ligne 329
+#		- PARTIE 4.2 : Musiques			Ligne 366
+#	5 GESTION DU TEMPS					Ligne 443
+#	6. VARIABLES COULEURS				Ligne 475
+#		(moved in `color.py`)
 #
 # ############################################################
 
