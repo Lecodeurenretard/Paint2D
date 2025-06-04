@@ -4,6 +4,11 @@ from pygame import Rect, Surface
 from colorlib import *
 from graphique import *
 
+# source: https://stackoverflow.com/questions/34287938/how-to-distinguish-left-click-right-click-mouse-clicks-in-pygame
+PYGAME_LEFT_CLICK	= 1
+PYGAME_MIDDLE_CLICK	= 2
+PYGAME_RIGHT_CLICK	= 3
+
 WIN_HEIGHT : int = 600; WIN_WIDTH : int = 600; WIN_MIN : int = min(WIN_WIDTH, WIN_HEIGHT)
 MENU_COLOR = 0x824E4E
 MENU_ZONES = (
@@ -43,6 +48,8 @@ COLOR_LIST : tuple[int, ...] = (
 )
 COLOR_LIST_LEN : int = len(COLOR_LIST)
 
-current_color	: int = hex_black	# black
+foreground_color	: int = hex_black
+background_color	: int = hex_tan
+
 brush_size 		: int = 1
 is_eraser		: bool = False

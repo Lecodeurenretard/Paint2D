@@ -16,10 +16,15 @@ def toggle_eraser() -> None:
 	global is_eraser
 	is_eraser = not is_eraser
 
-def change_color_to(color_list_index : int) -> None:
+def change_color_to(color_list_index : int, foreground : bool = True) -> None:
 	assert 0 <= color_list_index < COLOR_LIST_LEN
-	global current_color
-	current_color = COLOR_LIST[color_list_index]
+	
+	global foreground_color
+	global background_color
+	if foreground:
+		foreground_color = COLOR_LIST[color_list_index]
+	else:
+		background_color = COLOR_LIST[color_list_index]
 
 def quit(exit_code: int =0):
 	pygame.quit()
@@ -37,15 +42,44 @@ def draw_menus():
 	for butt in Button.butt_list:
 		butt.draw()
 
-def draw_brush(pos, surface : Surface = drawing_surf, max_size : int = -1) -> None:
+def draw_brush(pos, surface : Surface = drawing_surf, max_size : int = -1, foreground : bool = True) -> None:
+	global foreground_color
+	global background_color
+
+	color = foreground_color if foreground else background_color
+
 	if max_size < 0:	# no limit
-		pygame.draw.circle(surface, current_color, pos, brush_size/2, 0)
+		pygame.draw.circle(surface, color, pos, brush_size/2, 0)
 		return
 	if brush_size < 2:
-		draw_point(surface, pos, current_color)
+		draw_point(surface, pos, color)
 		return
 
-	pygame.draw.circle(surface, current_color, pos, min(brush_size, max_size)/2, 0)
+	pygame.draw.circle(surface, color, pos, min(brush_size, max_size)/2, 0)
+
+def draw_brush_preview() -> None:
+	global brush_size
+
+	brush_fore_preview_coord = (
+		Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT + 11, Button.DEFAULT_SIZE, 4),
+		15
+	)
+	brush_back_preview_coord = (
+		Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT + 11, Button.DEFAULT_SIZE, 5),
+		15
+	)
+	draw_brush((
+		brush_fore_preview_coord[0],
+		brush_fore_preview_coord[1]
+	), menu_surf, 25, foreground=True)
+	draw_brush((
+		brush_back_preview_coord[0],
+		brush_back_preview_coord[1]
+	), menu_surf, 25, foreground=False)
+
+	if brush_size > 25:
+		menu_surf.blit(pygame.transform.scale(PLUS_IMAGE, (14, 14)), (brush_fore_preview_coord[0] - 7, brush_fore_preview_coord[1] - 7))
+		menu_surf.blit(pygame.transform.scale(PLUS_IMAGE, (14, 14)), (brush_back_preview_coord[0] - 7, brush_back_preview_coord[1] - 7))
 
 def save_drawing() -> None:
 	pygame.image.save(drawing_surf, "my_drawing.png")
@@ -58,7 +92,7 @@ SAVE_BUTTON : Button = Button(
 	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	save_drawing,
-	"img/save.png"
+	icon="img/save.png"
 )
 
 LOWER_SIZE_BUTTON : Button = Button(
@@ -66,14 +100,14 @@ LOWER_SIZE_BUTTON : Button = Button(
 	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	(lambda: change_brush_size(-5)),
-	"img/lower_size.png"
+	icon="img/lower_size.png"
 )
 INCREASE_SIZE_BUTTON : Button = Button(
 	Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT, Button.DEFAULT_SIZE, 3),
 	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	(lambda: change_brush_size(5)),
-	"img/increase_size.png"
+	icon="img/increase_size.png"
 )
 
 ERASER_BUTTON : Button = Button(
@@ -81,7 +115,7 @@ ERASER_BUTTON : Button = Button(
 	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	toggle_eraser,
-	"img/eraser.png",
+	icon="img/eraser.png",
 	enable_toggle=True
 )
 
@@ -90,14 +124,14 @@ RESET_BUTTON : Button = Button(
 	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
 	(lambda: drawing_surf.fill(hex_white)),
-	"img/reset.png"
+	icon="img/reset.png"
 )
 FILL_BUTTON : Button = Button(
 	Button.location_on_horizontal_grid(WIN_WIDTH//2 - Button.DEFAULT_SIZE//2, Button.DEFAULT_SIZE, 5),		#centering the button
 	BUTTON_DIST_FROM_TOP,
 	Button.DEFAULT_SIZE,
-	(lambda: drawing_surf.fill(current_color)),
-	"img/fill.png"
+	(lambda: drawing_surf.fill(background_color)),
+	icon="img/fill.png"
 )
 
 COLOR_BUTTONS : list[Button] = []
@@ -109,7 +143,8 @@ COLOR_BUTT_CELL_OFFSET	: int = 32
 IS_COLOR_LIST_LEN_EVEN : bool = COLOR_LIST_LEN%2 == 0
 for i in range(COLOR_LIST_LEN):	# I miss C-style for loops
 	# Dynamic lambda generation, without `eval()` only the lastest value of `i` is read (in this case `COLOR_LIST_LEN-1`)
-	change_color_lambda = eval(f"lambda: change_color_to({i})")
+	change_color_left_lambda  = eval(f"lambda: change_color_to({i}, True)")
+	change_color_right_lambda = eval(f"lambda: change_color_to({i}, False)")
 	
 	# 
 	if i < COLOR_LIST_LEN/2:
@@ -124,7 +159,8 @@ for i in range(COLOR_LIST_LEN):	# I miss C-style for loops
 				),
 				COLOR_BUTT_DIST_FROM_TOP,
 				Button.DEFAULT_SIZE//2,
-				change_color_lambda,
+				action=change_color_left_lambda,
+				alt_action=change_color_right_lambda,
 				color_overrride=COLOR_LIST[i]
 			)
 		)
@@ -141,52 +177,75 @@ for i in range(COLOR_LIST_LEN):	# I miss C-style for loops
 			),
 			COLOR_BUTT_DIST_FROM_TOP + Button.DEFAULT_SIZE//2 + COLOR_BUTT_MARGIN,
 			Button.DEFAULT_SIZE//2,
-			change_color_lambda,
+			action=change_color_left_lambda,
+			alt_action=change_color_right_lambda,
 			color_overrride=COLOR_LIST[i]
 		)
 	)
 
+def draw_image_or_reset() -> None:
+	# Check for file in cmd line input
+	if len(argv) <= 1 or not isfile(argv[1]):
+		drawing_surf.fill(hex_white)
+		return
+	
+	try:
+		img = pygame.image.load(argv[1])
+		drawing_surf.blit(img, (0, 0))
+	except pygame.error:
+		extention = argv[1].split('.', 1)
+		extention = ('.' + extention[1]) if len(extention) > 1 else extention[0]
+		print(f"\x1B[31mError: The image type `{extention}` is not handled by pygame.\033[39m")
+		
+		if not pygame.image.get_extended():
+			print("\x1B[94mIt seems that pygame does not support any other format that BMP.\033[39m")
+			print("\x1B[94mTry reinstalling it.\033[39m")
 
+def draw(mouse_pos : tuple[int, int], prev_mouse_pos : tuple[int, int] | tuple[float, float], foreground : bool) -> None:
+	global foreground_color
+	global background_color
+	global brush_size
 
+	color :int = foreground_color if foreground else background_color
 
-
+	shifted_mouse_pos = (
+		mouse_pos[0],
+		mouse_pos[1] - DRAWING_OFFSET
+	)
+	shifted_prev_mouse_pos = (
+		prev_mouse_pos[0],
+		prev_mouse_pos[1] - DRAWING_OFFSET
+	)
+	if is_NaN_point(prev_mouse_pos):
+		draw_brush(shifted_mouse_pos, foreground=foreground)
+		return
+	
+	# Draw circle so the start and end positions are round
+	# Draw a line bc in a lot of cases, the mouse moves faster than 1 pixel per frame
+	if is_eraser:
+		color = BACKGROUND_COLOR
+	
+	draw_brush(shifted_prev_mouse_pos,	foreground=foreground)
+	draw_brush(shifted_mouse_pos,		foreground=foreground)
+	
+	pygame.draw.line(drawing_surf, color, shifted_prev_mouse_pos, shifted_mouse_pos, brush_size)
 
 
 
 
 
 def __main__() -> None:
-	global current_color
 	global brush_size
 	global is_eraser
 
-	# Check for file in cmd line input
-	if len(argv) > 1 and isfile(argv[1]):
-		try:
-			img = pygame.image.load(argv[1])
-			drawing_surf.blit(img, (0, 0))
-		except pygame.error:
-			extention = argv[1].split('.', 1)
-			extention = ('.' + extention[1]) if len(extention) > 1 else extention[0]
-			print(f"\x1B[31mError: The image type `{extention}` is not handled by pygame.\033[39m")
-			
-			if not pygame.image.get_extended():
-				print("\x1B[94mIt seems that pygame does not support any other format that BMP.\033[39m")
-				print("\x1B[94mTry reinstalling it.\033[39m")
-	else:
-		drawing_surf.fill(hex_white)
-
-
-
-
-
-
+	draw_image_or_reset()
 
 
 
 	prev_mouse_pos = (NaN, NaN)
 	was_clicking : bool = False
-	is_clicking : bool = False
+	is_left_clicking : bool = False
+	is_right_clicking : bool = False
 	while True:
 		menu_surf.unlock()
 		window.blits((					# Draw `menu_surf` and `drawing_surf` on screen
@@ -195,63 +254,29 @@ def __main__() -> None:
 		))
 		pygame.display.flip()
 		draw_menus()
-
-		brush_coord = (
-			Button.location_on_horizontal_grid(BUTTON_FIRST_DIST_FROM_LEFT + 11, Button.DEFAULT_SIZE, 4),
-			15
-		)
-		draw_brush((			# Draw the brush preview
-			brush_coord[0],
-			brush_coord[1]
-		), menu_surf, 25)
-		if brush_size > 25:
-			# Display a plus sign
-			menu_surf.blit(pygame.transform.scale(PLUS_IMAGE, (14, 14)), (brush_coord[0] - 7, brush_coord[1] - 7))
+		draw_brush_preview()
 		menu_surf.lock()
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				quit()
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				is_clicking = True
-			if event.type == pygame.MOUSEBUTTONUP:
-				is_clicking = False
+		
+		is_left_clicking :bool = pygame.mouse.get_pressed()[0]
+		is_right_clicking : bool = pygame.mouse.get_pressed()[2]
+
 
 		mouse_pos = get_mouse()
-		if is_clicking:
-			shifted_mouse_pos = (
-				mouse_pos[0],
-				mouse_pos[1] - DRAWING_OFFSET
-			)
-			shifted_prev_mouse_pos = (
-				prev_mouse_pos[0],
-				prev_mouse_pos[1] - DRAWING_OFFSET
-			)
-			if can_draw_at(mouse_pos):
-				if is_NaN_point(prev_mouse_pos):
-					draw_brush(shifted_mouse_pos)
-				else:
-					# Draw circle so the start and end positions are round
-					# Draw a line bc in a lot of cases, the mouse moves faster than 1 pixel per frame
-					color_remember = current_color
-					if is_eraser:
-						current_color = BACKGROUND_COLOR
-
-					draw_brush(shifted_prev_mouse_pos)
-					pygame.draw.line(drawing_surf, current_color, shifted_prev_mouse_pos, shifted_mouse_pos, globals()["brush_size"])
-					draw_brush(shifted_mouse_pos)
-
-					current_color = color_remember
+		if is_left_clicking and can_draw_at(mouse_pos):
+			draw(mouse_pos, prev_mouse_pos, foreground=True)
+		elif is_right_clicking and can_draw_at(mouse_pos):
+			draw(mouse_pos, prev_mouse_pos, foreground=False)
+		else:
+			Button.check_new_click(mouse_pos, pygame.mouse.get_pressed(), was_clicking)
 
 
-			for butt in Button.butt_list:
-				if not was_clicking:
-					butt.handle_click(mouse_pos)
-
-
-		Button.update_button_presses(is_clicking, mouse_pos)
+		Button.update_button_presses(is_left_clicking, mouse_pos, is_left_clicking)
 		prev_mouse_pos = mouse_pos
-		was_clicking = is_clicking
+		was_clicking = is_left_clicking
 
 if __name__ == "__main__":
 	__main__()
