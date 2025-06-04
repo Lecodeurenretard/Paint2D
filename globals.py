@@ -51,5 +51,5 @@ COLOR_LIST_LEN : int = len(COLOR_LIST)
 foreground_color	: int = hex_black
 background_color	: int = hex_tan
 
-brush_size 		: int = 1
+brush_size 		: int = 11
 is_eraser		: bool = False

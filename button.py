@@ -101,7 +101,7 @@ class Button:
 			elif button_pressed[0]:
 				click = PYGAME_LEFT_CLICK
 			else:
-				click = None
+				click = 0
 
 			self.activate(click)
 			self.toggled = not self.toggled
