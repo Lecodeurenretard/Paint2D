@@ -17,7 +17,7 @@ menu_surf = Surface(
 drawing_surf = Surface(
 	(WIN_WIDTH, WIN_HEIGHT - MENU_ZONES[0].h)	# change accordingly if adding more menus
 )
-DRAWING_OFFSET = MENU_ZONES[0].h
+DRAWING_OFFSET : int = MENU_ZONES[0].h
 
 COLOR_LIST : tuple[int, ...] = (
 	hex_black,
@@ -43,6 +43,6 @@ COLOR_LIST : tuple[int, ...] = (
 )
 COLOR_LIST_LEN : int = len(COLOR_LIST)
 
-current_color	: int = 0x000000	# black
+current_color	: int = hex_black	# black
 brush_size 		: int = 1
 is_eraser		: bool = False
